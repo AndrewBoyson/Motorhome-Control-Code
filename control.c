@@ -15,6 +15,8 @@ static char    _fill            = 0;
 static char    _drain           = 0;
 static char    _inverter        = 0;
 static char    _lpgHeater       = 0;
+static char    _freshHeater     = 0;
+static char    _greyHeater      = 0;
 static int16_t _pumpMinlitres   = 0;
 static int16_t _pumpDplusLitres = 0;
 static int16_t _drainMaxLitres  = 0;
@@ -24,15 +26,19 @@ char    ControlGetFill           () { return _fill           ; }
 char    ControlGetDrain          () { return _drain          ; }
 char    ControlGetInverter       () { return _inverter       ; }
 char    ControlGetLpgHeater      () { return _lpgHeater      ; }
+char    ControlGetFreshHeater    () { return _freshHeater    ; }
+char    ControlGetGreyHeater     () { return _greyHeater     ; }
 int16_t ControlGetPumpMinLitres  () { return _pumpMinlitres  ; }
 int16_t ControlGetPumpDplusLitres() { return _pumpDplusLitres; }
 int16_t ControlGetDrainMaxLitres () { return _drainMaxLitres ; }
 
-static void setPump     (char value) { _pump      = value; EepromSaveChar(EEPROM_PUMP_S8      , value); }
-static void setFill     (char value) { _fill      = value; EepromSaveChar(EEPROM_FILL_S8      , value); }
-static void setDrain    (char value) { _drain     = value; EepromSaveChar(EEPROM_DRAIN_S8     , value); }
-static void setInverter (char value) { _inverter  = value; EepromSaveChar(EEPROM_INVERTER_S8  , value); }
-static void setLpgHeater(char value) { _lpgHeater = value; EepromSaveChar(EEPROM_LPG_HEATER_S8, value); }
+static void setPump       (char value) { _pump        = value; EepromSaveChar(EEPROM_PUMP_S8        , value); }
+static void setFill       (char value) { _fill        = value; EepromSaveChar(EEPROM_FILL_S8        , value); }
+static void setDrain      (char value) { _drain       = value; EepromSaveChar(EEPROM_DRAIN_S8       , value); }
+static void setInverter   (char value) { _inverter    = value; EepromSaveChar(EEPROM_INVERTER_S8    , value); }
+static void setLpgHeater  (char value) { _lpgHeater   = value; EepromSaveChar(EEPROM_LPG_HEATER_S8  , value); }
+static void setFreshHeater(char value) { _freshHeater = value; EepromSaveChar(EEPROM_FRESH_HEATER_S8, value); }
+static void setGreyHeater (char value) { _greyHeater  = value; EepromSaveChar(EEPROM_GREY_HEATER_S8 , value); }
 
 void ControlSetPump  (char value)
 {
@@ -69,6 +75,14 @@ void ControlSetLpgHeater   (char value)
 {
     setLpgHeater(value);
 }
+void ControlSetFreshHeater   (char value)
+{
+    setFreshHeater(value);
+}
+void ControlSetGreyHeater   (char value)
+{
+    setGreyHeater(value);
+}
 
 
 void ControlSetPumpMinLitres  (int16_t value) { _pumpMinlitres   = value; EepromSaveS16 (EEPROM_PUMP_MIN_LITRES_S16,   value); }
@@ -82,6 +96,8 @@ void ControlInit()
     _drain           = EepromReadChar(EEPROM_DRAIN_S8             );
     _inverter        = EepromReadChar(EEPROM_INVERTER_S8          );
     _lpgHeater       = EepromReadChar(EEPROM_LPG_HEATER_S8        );
+    _freshHeater     = EepromReadChar(EEPROM_FRESH_HEATER_S8      );
+    _greyHeater      = EepromReadChar(EEPROM_GREY_HEATER_S8       );
     _pumpMinlitres   = EepromReadS16 (EEPROM_PUMP_MIN_LITRES_S16  );
     _pumpDplusLitres = EepromReadS16 (EEPROM_PUMP_DPLUS_LITRES_S16);
     _drainMaxLitres  = EepromReadS16 (EEPROM_DRAIN_MAX_LITRES_S16 );
@@ -105,6 +121,8 @@ void ControlMain()
     Relay1Set(_pump       );
     Relay2Set(_fill       );
     Relay3Set(_drain      );
+    Relay4Set(_freshHeater);
+    Relay5Set(_greyHeater );
     Relay6Set(_lpgHeater  );
     Relay7Set(Dplus && Ehu); //Alarm
     Relay8Set(_inverter   );
